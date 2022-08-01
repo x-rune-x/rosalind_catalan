@@ -9,24 +9,28 @@ def catalan_numbers(n):
     return output
 
 
-def catalan_dynamic(n):
-    if n == 1 or n == 0:
-        return 1
+def get_catalan_num(num):
+    # Make function dynamic by storing previously found catalan numbers to be quickly accessed
+    # instead of going through whole recursion process when the answer has already been computed.
 
-    catalan_nums = [0] * (n + 1)
-    catalan_nums[0] = 1
-    catalan_nums[1] = 1
+    catalan_nums = {
+        0: 1,
+        1: 1
+    }
 
-    for index in range(2, n + 1):
-        for k in range(1, index + 1):
-            print(k - 1, n - k)
-            print(catalan_nums[k-1], catalan_nums[n - k])
-            first_part = catalan_nums[k-1] if catalan_nums[k-1] != 0 else catalan_dynamic(k - 1)
-            second_part = catalan_nums[n - k] if catalan_nums[n - k] != 0 else catalan_dynamic(n - k)
+    def catalan_dynamic(n):
+        if n in catalan_nums:
+            return catalan_nums[n]
 
-            catalan_nums[index] += first_part * second_part
+        output = 0
+        for k in range(1, n + 1):
+            output += catalan_dynamic(k - 1) * catalan_dynamic(n - k)
 
-    return catalan_nums[n]
+        catalan_nums.update({n: output})
+
+        return output
+
+    return catalan_dynamic(num)
 
 
 def matching_pairs(rna_seq):
@@ -58,4 +62,4 @@ def get_rna_seq_from_file(file_path):
 # with open('solution.txt', 'w') as write_file:
 #     write_file.write(str(perfect_noncrossing_matchings))
 
-print(catalan_dynamic(3))
+print(get_catalan_num(30))
