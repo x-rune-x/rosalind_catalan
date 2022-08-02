@@ -50,16 +50,50 @@ def matching_pairs(rna_seq):
     return output
 
 
+def number_of_noncrossing_matchings(rna_seq):
+    rna_pairs = {'A': 'U', 'U': 'A', 'G': 'C', 'C': 'G'}
+
+    known_matchings = {
+        "AU": 1,
+        "UA": 1,
+        "GC": 1,
+        "CG": 1
+    }
+
+    def matching_pairs_dynamic(seq):
+        print(seq)
+        n = int(len(seq) / 2)
+
+        if len(seq) == 0:
+            print('returning 1')
+            return 1
+
+        if seq in known_matchings:
+            print('Seq found!')
+            return known_matchings[seq]
+
+        output = 0
+        for k in range(1, n + 1):
+            if seq[2 * k - 1] == rna_pairs[seq[0]]:
+                print(f'First part is {seq[1:2 * k - 1]}, second part is {seq[2 * k:]}')
+                output += matching_pairs_dynamic(seq[1:2 * k - 1]) * matching_pairs_dynamic(seq[2 * k:])
+
+        known_matchings.update({seq: output})
+
+        return output
+
+    return matching_pairs_dynamic(rna_seq)
+
+
 def get_rna_seq_from_file(file_path):
     with open(file_path) as read_file:
         return read_file.readlines()
 
 
-# rna = get_rna_seq_from_file('rosalind_cat.txt')[1]
-# perfect_noncrossing_matchings = matching_pairs(rna)
-# print(perfect_noncrossing_matchings)
+rna = get_rna_seq_from_file('sample.txt')[1]
+perfect_noncrossing_matchings = number_of_noncrossing_matchings('AUAU')
+print(perfect_noncrossing_matchings)
 
-# with open('solution.txt', 'w') as write_file:
-#     write_file.write(str(perfect_noncrossing_matchings))
+with open('solution.txt', 'w') as write_file:
+    write_file.write(str(perfect_noncrossing_matchings))
 
-print(get_catalan_num(30))
